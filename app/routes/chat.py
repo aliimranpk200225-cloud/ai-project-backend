@@ -100,19 +100,20 @@ def ask(request: ChatRequest):
 
     rag_service = RAGService(
         startup.retriever,
-        gemini_service.llm
+        gemini_service.agent
     )
 
     history = memory_service.get_history(request.session_id)
     formatted_history = format_history(history)
     chain = rag_service.build_chain()
 
-    answer = chain.invoke(
+    response = chain.invoke(
         {
             "question": request.question,
-            "history": formatted_history
+            "history": formatted_history,
         }
     )
+    answer = response["messages"][-1].content
     memory_service.add_user_message(
         request.session_id,
         request.question
@@ -125,6 +126,10 @@ def ask(request: ChatRequest):
     return {
         "answer": answer
     }
+
+
+
+
 def format_history(history):
 
     formatted = ""

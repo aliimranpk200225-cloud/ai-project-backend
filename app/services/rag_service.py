@@ -63,7 +63,7 @@ class RAGService:
                 }
                 | prompt
                 | self.llm
-                | StrOutputParser()
+
         )
 
         return chain
